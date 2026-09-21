@@ -140,7 +140,7 @@ body.mode-choose .arrow{display:block}
 }
 .spin:active{transform:translateY(5px);box-shadow:0 2px 0 var(--or-fonce),0 4px 8px rgba(0,0,0,.2)}
 .hint{display:none;color:#FFE3E7;font-weight:600;text-align:center}
-body.mode-choose .spin{display:none}
+body.mode-choose #spinBtn{display:none}
 body.mode-choose .hint{display:block}
 
 /* ---------- Mon repas ---------- */
@@ -231,6 +231,36 @@ body.mode-choose .hint{display:block}
 .recap .result .sm{color:var(--or);font-weight:800;font-size:1rem}
 .note{margin-top:14px;text-align:center;font-size:.85rem;color:var(--encre-douce);font-weight:600;max-width:70ch;margin-left:auto;margin-right:auto}
 
+/* ---------- Menu principal ---------- */
+.views{display:flex;gap:6px;background:var(--blanc);padding:6px;border-radius:999px;max-width:520px;margin:0 auto 16px;box-shadow:0 5px 0 rgba(29,42,77,.12)}
+.view-btn{flex:1;padding:11px 12px;border-radius:999px;font-weight:800;font-size:1.1rem;color:var(--encre-douce);transition:background .2s,color .2s}
+.view-btn[aria-pressed="true"]{background:var(--encre);color:var(--blanc)}
+body.view-recipes #viewMeal{display:none}
+body:not(.view-recipes) #viewRecipes{display:none}
+
+/* ---------- Recettes ---------- */
+:root{--rcell-h:210px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:14px}
+.chip{padding:7px 14px;border-radius:999px;font-weight:700;font-size:.98rem;background:rgba(255,255,255,.88)}
+.chip[aria-pressed="true"]{background:var(--or);box-shadow:0 3px 0 var(--or-fonce)}
+.rwindow{height:var(--rcell-h);max-width:560px;margin:0 auto;--cat:var(--or)}
+.rcell{height:var(--rcell-h);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:12px 16px;gap:6px}
+.remo{font-size:4.2rem;line-height:1.1}
+.rname{font-weight:800;font-size:clamp(1.35rem,4vw,1.75rem);line-height:1.1}
+.rcat{font-weight:700;font-size:.95rem;color:var(--encre-douce);background:#EEF3FF;padding:2px 12px;border-radius:999px}
+.rgrid{display:none;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:16px}
+#viewRecipes.choose .rgrid{display:grid}
+#viewRecipes.choose #rSpinBtn{display:none}
+.rpick{background:var(--blanc);border-radius:18px;padding:10px 8px;min-height:98px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-weight:700;font-size:.98rem;line-height:1.15;text-align:center;box-shadow:0 4px 0 rgba(0,0,0,.18);transition:transform .08s}
+.rpick:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
+.rpick .e{font-size:2rem}
+.rpick[aria-pressed="true"]{background:#FFF3C4;box-shadow:inset 0 0 0 4px var(--or),0 4px 0 rgba(0,0,0,.18)}
+.rresult{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.rresult .remo{font-size:5rem}
+.rportion{font-weight:600;color:var(--encre-douce);font-size:1rem}
+.rpick-nums{font-size:.8rem;font-weight:600;color:var(--encre-douce);margin-top:2px}
+@media (max-width:720px){ :root{--rcell-h:190px} .remo{font-size:3.6rem} .rgrid{grid-template-columns:repeat(2,minmax(0,1fr))} }
+
 /* Toast */
 .toast{
   position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,140%);
@@ -264,6 +294,13 @@ body.mode-choose .hint{display:block}
 </head>
 <body class="mode-surprise">
 <div class="wrap">
+
+  <nav class="views" aria-label="Menu">
+    <button class="view-btn" id="tabMeal" aria-pressed="true">🎰 Mon repas</button>
+    <button class="view-btn" id="tabRecipes" aria-pressed="false">📖 Recettes</button>
+  </nav>
+
+<div id="viewMeal">
 
   <section class="machine" id="machine" aria-label="Machine à repas">
     <div class="marquee">
@@ -340,6 +377,62 @@ body.mode-choose .hint{display:block}
   </section>
 
   <p class="note">Valeurs indicatives et arrondies, calculées pour la portion affichée (et non pour 100 g), d'après des moyennes de tables nutritionnelles. La recette réelle (cuisson, marque, matière grasse ajoutée) peut les faire varier.</p>
+</div>
+
+<div id="viewRecipes">
+  <section class="machine" aria-label="Roulette des recettes">
+    <div class="marquee">
+      <div class="bulbs" aria-hidden="true"></div>
+      <h2 class="title">📖 La roulette des recettes</h2>
+      <p class="subtitle">Un plat complet déjà tout trouvé !</p>
+      <div class="bulbs" aria-hidden="true"></div>
+    </div>
+
+    <div class="modes" role="group" aria-label="Mode de jeu des recettes">
+      <button class="mode-btn" id="rModeSurprise" aria-pressed="true">🎲 Surprends-moi</button>
+      <button class="mode-btn" id="rModeChoose" aria-pressed="false">👆 Je choisis</button>
+    </div>
+
+    <div class="chips" id="rChips" role="group" aria-label="Type de plat"></div>
+
+    <div class="window rwindow"><div class="strip" id="rStrip"></div></div>
+
+    <div class="controls">
+      <button class="spin" id="rSpinBtn">🎰 Lancer !</button>
+    </div>
+    <div class="rgrid" id="rGrid"></div>
+  </section>
+
+  <section class="meal" id="recipeCard" aria-live="polite">
+    <h2>📖 MA RECETTE</h2>
+    <div class="meal-grid">
+      <div class="rresult" id="rResult"></div>
+      <div class="totals">
+        <div class="total-box">
+          <div class="lab">💪 Protéines</div>
+          <div class="val" id="rTotProt">0 g</div>
+          <div class="gauge">
+            <div class="gauge-track" role="img" id="rGaugeTrack" aria-label="Jauge de protéines">
+              <div class="gauge-fill" id="rGaugeFill"></div>
+            </div>
+            <div class="gauge-steps" id="rGaugeSteps">
+              <span>Peu protéiné</span><span>Correct</span><span>Riche en protéines</span>
+            </div>
+            <div class="verdict" id="rVerdict"></div>
+          </div>
+        </div>
+        <div class="total-box">
+          <div class="lab">🔥 Calories</div>
+          <div class="val" id="rTotKcal">0 kcal</div>
+        </div>
+      </div>
+    </div>
+    <div class="meal-actions">
+      <button class="btn replay" id="rDislikeBtn">👎 Je n'aime pas</button>
+    </div>
+  </section>
+  <p class="note">Valeurs estimées pour la portion indiquée et une préparation maison classique, d'après des moyennes de tables nutritionnelles et le calcul des ingrédients. Elles peuvent varier de 20 à 30 % selon la recette (quantité de fromage, de crème, de matière grasse).</p>
+</div>
 </div>
 
 <div class="toast" id="toast" role="status"></div>
@@ -890,8 +983,8 @@ function renderFavs(){
 /* ============ Ampoules de la machine ============ */
 let bulbTimer = null, bulbTick = 0;
 function buildBulbs(){
-  ["bulbsTop","bulbsBottom"].forEach(id => {
-    $(id).innerHTML = Array.from({length:22}, (_, i) => `<span class="${i%2 ? "" : "on"}"></span>`).join("");
+  document.querySelectorAll(".bulbs").forEach(el => {
+    el.innerHTML = Array.from({length:22}, (_, i) => `<span class="${i%2 ? "" : "on"}"></span>`).join("");
   });
 }
 function startBulbs(){
@@ -918,6 +1011,161 @@ function setMode(mode){
   $("modeChoose").setAttribute("aria-pressed", mode === "choose");
 }
 
+/* ============ Recettes ============ */
+const RECIPE_CATS = [
+  { key:"pates",   label:"Pâtes",            e:"🍝" },
+  { key:"pdt",     label:"Pommes de terre",  e:"🥔" },
+  { key:"riz",     label:"Riz",              e:"🍚" },
+  { key:"hache",   label:"Viande hachée",    e:"🍔" },
+  { key:"poulet",  label:"Poulet",           e:"🍗" },
+  { key:"rapide",  label:"Œufs, jambon et plats rapides", e:"🍳" },
+  { key:"famille", label:"Plats familiaux",  e:"🍲" }
+];
+const RCAT = Object.fromEntries(RECIPE_CATS.map(c => [c.key, c]));
+/* [nom, emoji, catégorie, portion, kcal, protéines g] — estimations pour une préparation maison classique */
+const RECIPES = [
+  ["Pâtes bolognaise","🍝","pates","1 assiette (≈ 300 g)",420,20],
+  ["Pâtes carbonara","🥓","pates","1 assiette (≈ 300 g)",560,23],
+  ["Coquillettes jambon-fromage","🐚","pates","1 assiette (≈ 270 g)",470,26],
+  ["Gratin de macaronis","🧀","pates","1 part (≈ 300 g)",480,19],
+  ["Pâtes au poulet et à la crème","🍗","pates","1 assiette (≈ 320 g)",490,34],
+  ["Lasagnes bolognaises","🥘","pates","1 part (≈ 300 g)",420,21],
+  ["Pâtes pesto-poulet","🌿","pates","1 assiette (≈ 300 g)",530,34],
+  ["Spaghettis aux boulettes de viande","🧆","pates","1 assiette (≈ 380 g)",570,29],
+  ["Gnocchis tomate-mozzarella","🍅","pates","1 assiette (≈ 330 g)",440,18],
+  ["Raviolis","🥟","pates","1 assiette (≈ 300 g)",300,11],
+
+  ["Hachis Parmentier","🥧","pdt","1 part (≈ 300 g)",360,20],
+  ["Gratin dauphinois au jambon","🫕","pdt","1 part de gratin + 60 g de jambon",390,20],
+  ["Tartiflette","🏔️","pdt","1 part (≈ 300 g)",540,24],
+  ["Pommes de terre sautées et viande","🥩","pdt","200 g de pommes de terre + 100 g de viande",480,31],
+  ["Pommes de terre au four garnies","🥔","pdt","2 pommes de terre garnies",370,23],
+  ["Purée et jambon","🥣","pdt","250 g de purée + 2 tranches de jambon",315,21],
+  ["Purée et saucisses","🌭","pdt","250 g de purée + 100 g de saucisse",510,22],
+  ["Roulés de jambon, pommes de terre et béchamel","🌀","pdt","2 roulés + pommes de terre",450,30],
+  ["Pommes de terre façon raclette","🧀","pdt","250 g de pommes de terre + 80 g de fromage + jambon",520,32],
+  ["Röstis et steak haché","🥞","pdt","2 röstis + 1 steak haché",480,29],
+
+  ["Riz cantonais","🍚","riz","1 assiette (≈ 300 g)",500,19],
+  ["Riz au poulet et au curry","🍛","riz","180 g de riz + 100 g de poulet + sauce",485,35],
+  ["Riz au poulet et à la tomate","🍅","riz","180 g de riz + 100 g de poulet + sauce",440,36],
+  ["Poisson pané et riz","🐟","riz","2 poissons panés + 180 g de riz",435,17],
+
+  ["Steak haché-frites","🍟","hache","1 steak haché + 150 g de frites au four",470,30],
+  ["Steak haché-purée","🥔","hache","1 steak haché + 250 g de purée",455,31],
+  ["Boulettes à la sauce tomate","🍖","hache","5 boulettes (150 g) + sauce, sans accompagnement",410,27],
+  ["Courgettes farcies","🥒","hache","2 demi-courgettes farcies",330,24],
+  ["Tacos maison","🌮","hache","2 tacos",480,28],
+  ["Cheeseburgers maison et potatoes","🍔","hache","1 cheeseburger + 120 g de potatoes",760,40],
+
+  ["Poulet rôti et pommes de terre","🍗","poulet","1 cuisse + 200 g de pommes de terre",520,35],
+  ["Poulet à la moutarde","🟡","poulet","120 g de poulet + sauce, sans accompagnement",290,36],
+  ["Poulet crème-champignons","🍄","poulet","120 g de poulet + sauce, sans accompagnement",270,38],
+  ["Poulet pané maison","🐔","poulet","1 escalope panée (≈ 130 g)",290,30],
+  ["Nuggets maison et frites","🐤","poulet","120 g de nuggets + 150 g de frites au four",515,28],
+  ["Cordon bleu et purée","🥓","poulet","1 cordon bleu + 250 g de purée",455,21],
+  ["Wraps au poulet","🌯","poulet","2 wraps",550,41],
+
+  ["Croque-monsieur et salade","🥪","rapide","1 croque-monsieur + salade",450,20],
+  ["Quiche lorraine","🥧","rapide","1 part (≈ 150 g)",390,16],
+  ["Pizza maison jambon-fromage","🍕","rapide","2 grosses parts (≈ 250 g)",580,27],
+  ["Flammekueche","🧅","rapide","½ flammekueche (≈ 200 g)",480,16],
+  ["Omelette jambon-fromage","🍳","rapide","2 œufs + jambon + fromage",300,26],
+  ["Omelette aux pommes de terre","🥔","rapide","2 œufs + 150 g de pommes de terre",370,16],
+  ["Œufs au plat et pommes de terre","🍳","rapide","2 œufs + 200 g de pommes de terre sautées",480,17],
+  ["Œufs cocotte","🥚","rapide","2 œufs cocotte + mouillettes",320,19],
+  ["Crêpes jambon-fromage","🥞","rapide","2 crêpes garnies",480,34],
+  ["Galettes complètes","🍘","rapide","1 galette jambon, œuf, fromage",390,26],
+  ["Feuilletés jambon-fromage","🥐","rapide","2 feuilletés (≈ 150 g)",450,15],
+  ["Hot-dogs","🌭","rapide","2 hot-dogs",490,18],
+
+  ["Bœuf bourguignon","🐂","famille","250 g, sans accompagnement",300,32],
+  ["Lentilles-saucisses","🫘","famille","200 g de lentilles + 1 saucisse",460,31],
+  ["Couscous","🌾","famille","Semoule, légumes, poulet et 1 merguez",560,40],
+  ["Poulet basquaise et riz","🫑","famille","120 g de poulet + sauce + 150 g de riz",465,36],
+  ["Gratin de chou-fleur à la béchamel","🥦","famille","1 part (≈ 370 g)",260,15]
+].map(([n, e, c, p, k, g]) => ({ n, e, c, p, k, g }));
+
+const rState = { cur: rnd(RECIPES.length), busy: false, filter: "all" };
+
+function rPool(){ return RECIPES.map((_, i) => i).filter(i => rState.filter === "all" || RECIPES[i].c === rState.filter); }
+function pickOther(pool, avoid){ const c = pool.filter(i => i !== avoid); return c.length ? c[rnd(c.length)] : pool[0]; }
+function rCell(i){
+  const r = RECIPES[i], c = RCAT[r.c];
+  return `<div class="rcell"><div class="remo" aria-hidden="true">${r.e}</div><div class="rname">${esc(r.n)}</div>
+    <div class="badges"><span class="badge">🔥 ≈ ${r.k} kcal</span><span class="badge p">💪 ≈ ${r.g} g</span></div></div>`;
+}
+function rSetStrip(seq){ $("rStrip").innerHTML = seq.map(rCell).join(""); }
+
+function rAnimate(target, fillers, duration){
+  return new Promise(resolve => {
+    const strip = $("rStrip"), H = strip.parentElement.clientHeight, pool = rPool();
+    const seq = [rState.cur];
+    for(let k = 0; k < fillers; k++) seq.push(pool[rnd(pool.length)]);
+    seq.push(target);
+    rState.busy = true; rLock(true);
+    const d = reduceMotion ? Math.min(duration, 150) : duration;
+    rSetStrip(seq);
+    strip.style.transition = "none"; strip.style.transform = "translateY(0)";
+    void strip.offsetHeight;
+    strip.style.transition = `transform ${d}ms ${fillers > 3 ? "cubic-bezier(.12,.8,.24,1.04)" : "cubic-bezier(.3,.8,.3,1)"}`;
+    strip.style.transform = `translateY(${-(seq.length - 1) * H}px)`;
+    setTimeout(() => {
+      rState.cur = target;
+      strip.style.transition = "none"; strip.style.transform = "translateY(0)";
+      rSetStrip([target]);
+      rState.busy = false; rLock(false);
+      renderRecipeCard(true); markRGrid();
+      resolve();
+    }, d + 30);
+  });
+}
+function rLock(on){ document.querySelectorAll("#rSpinBtn,#rDislikeBtn,.rpick").forEach(b => b.disabled = on); }
+
+async function rSpin(){
+  if(rState.busy) return;
+  startBulbs();
+  await rAnimate(pickOther(rPool(), rState.cur), 18, 1700);
+  stopBulbs();
+}
+function rDislike(){ if(!rState.busy) rAnimate(pickOther(rPool(), rState.cur), 8, 800); }
+function rPick(i){ if(!rState.busy && i !== rState.cur) rAnimate(i, 3, 450); }
+
+function renderRecipeCard(pop){
+  const r = RECIPES[rState.cur], c = RCAT[r.c];
+  $("rResult").innerHTML = `<div class="remo" aria-hidden="true">${r.e}</div><div class="rname">${esc(r.n)}</div>
+    <div class="rcat">${c.e} ${esc(c.label)}</div><div class="rportion">Portion : ${esc(r.p)}</div>`;
+  const lv = level(r.g);
+  $("rTotProt").textContent = `≈ ${r.g} g`;
+  $("rTotKcal").textContent = `≈ ${r.k} kcal`;
+  $("rGaugeFill").style.width = Math.min(r.g / GAUGE_MAX, 1) * 100 + "%";
+  $("rGaugeTrack").setAttribute("aria-label", `Jauge de protéines : environ ${r.g} grammes, ${VERDICTS[lv].slice(3)}`);
+  [...$("rGaugeSteps").children].forEach((sp, i) => sp.classList.toggle("on", i === lv));
+  $("rVerdict").textContent = VERDICTS[lv];
+  if(pop && !reduceMotion){ const m = $("recipeCard"); m.classList.remove("pop"); void m.offsetWidth; m.classList.add("pop"); }
+}
+function renderRChips(){
+  const all = [{ key:"all", label:"Tout", e:"✨" }, ...RECIPE_CATS];
+  $("rChips").innerHTML = all.map(c => `<button class="chip" data-f="${c.key}" aria-pressed="${c.key === rState.filter}">${c.e} ${esc(c.label)}</button>`).join("");
+  $("rChips").querySelectorAll(".chip").forEach(b => b.addEventListener("click", () => { rState.filter = b.dataset.f; renderRChips(); renderRGrid(); }));
+}
+function renderRGrid(){
+  $("rGrid").innerHTML = rPool().map(i => `<button class="rpick" data-i="${i}" aria-pressed="${i === rState.cur}"><span class="e" aria-hidden="true">${RECIPES[i].e}</span>${esc(RECIPES[i].n)}<span class="rpick-nums">≈ ${RECIPES[i].k} kcal · ${RECIPES[i].g} g</span></button>`).join("");
+  $("rGrid").querySelectorAll(".rpick").forEach(b => b.addEventListener("click", () => rPick(+b.dataset.i)));
+}
+function markRGrid(){ $("rGrid").querySelectorAll(".rpick").forEach(b => b.setAttribute("aria-pressed", +b.dataset.i === rState.cur)); }
+function setRMode(mode){
+  $("viewRecipes").classList.toggle("choose", mode === "choose");
+  $("rModeSurprise").setAttribute("aria-pressed", mode === "surprise");
+  $("rModeChoose").setAttribute("aria-pressed", mode === "choose");
+}
+function setView(v){
+  document.body.classList.toggle("view-recipes", v === "recipes");
+  $("tabMeal").setAttribute("aria-pressed", v === "meal");
+  $("tabRecipes").setAttribute("aria-pressed", v === "recipes");
+  window.scrollTo({ top: 0, behavior: "auto" });
+}
+
 /* ============ Démarrage ============ */
 buildBulbs();
 buildReels();
@@ -934,6 +1182,13 @@ $("replayBtn").addEventListener("click", spinAll);
 $("favBtn").addEventListener("click", saveFav);
 $("modeSurprise").addEventListener("click", () => setMode("surprise"));
 $("modeChoose").addEventListener("click", () => setMode("choose"));
+renderRChips(); renderRGrid(); rSetStrip([rState.cur]); renderRecipeCard(false);
+$("rSpinBtn").addEventListener("click", rSpin);
+$("rDislikeBtn").addEventListener("click", rDislike);
+$("rModeSurprise").addEventListener("click", () => setRMode("surprise"));
+$("rModeChoose").addEventListener("click", () => setRMode("choose"));
+$("tabMeal").addEventListener("click", () => setView("meal"));
+$("tabRecipes").addEventListener("click", () => setView("recipes"));
 </script>
 </body>
 </html>
